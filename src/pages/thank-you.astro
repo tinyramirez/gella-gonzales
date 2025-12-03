@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro'
+const title = 'Thank You'
+---
+
+<Layout title={title}>
+  <main class="max-w-4xl mx-auto px-6 py-16 text-gray-300 min-h-screen flex flex-col justify-center items-center">
+    <div class="text-center">
+      <h1 id="ty-heading" class="text-4xl font-light mb-8 text-white">Thank You</h1>
+      <p class="text-lg mb-8 max-w-2xl leading-relaxed">
+        You've gifted yourself this experience. Can't wait to share the space and energy with you. See you soon!
+      </p>
+      <a href="/" class="link-outline">
+        Back to Home
+      </a>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  // Client-side: read `name` query param and update heading safely
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('name');
+    if (raw) {
+      const safe = raw.replace(/[^a-zA-Z0-9\s'\-]/g, '');
+      const el = document.getElementById('ty-heading');
+      if (el) el.textContent = `Thank you, ${safe}!`;
+    }
+  } catch (e) {
+    // no-op
+  }
+</script>

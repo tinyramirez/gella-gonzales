@@ -12,6 +12,7 @@ const { videoMp4 = '/videos/gella-gonzales.mp4', videoWebm = '/videos/hero-video
     class="absolute inset-0 w-full h-full object-cover video-smooth video-bw"
     autoplay
     muted
+    webkit-playsinline
     playsinline
     preload="metadata"
     poster={poster}
@@ -22,7 +23,7 @@ const { videoMp4 = '/videos/gella-gonzales.mp4', videoWebm = '/videos/hero-video
     <!-- Sources will be set lazily by script below when the video enters the viewport -->
   </video>
 
-  <div class="absolute inset-0 bg-black/10"></div>
+  <div class="absolute inset-0 bg-black/2 md:bg-black/4"></div>
   <!-- Large brand lettering (left, center) -->
   <div class="absolute left-6 lg:left-16 top-1/2 transform -translate-y-1/2 z-40">
     <h2 class="brand-lettering pointer-events-none">Gella Gonzales</h2>
@@ -37,10 +38,23 @@ const { videoMp4 = '/videos/gella-gonzales.mp4', videoWebm = '/videos/hero-video
     </div>
   <h1 class="sr-only">Gella Gonzales — Movement Artist</h1>
 
+  <!-- Custom play button shown only if autoplay is blocked -->
+  <button id="hero-play" class="hidden absolute inset-0 m-auto w-14 h-14 rounded-full bg-white/6 border border-white/20 text-white z-50 flex items-center justify-center">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M5 3v18l15-9L5 3z"/></svg>
+  </button>
+
   <script type="module">
     // Lazy-load video sources and loop a specific segment (0:15 - 0:26)
     const section = document.getElementById('hero');
     const vid = section ? section.querySelector('video') : null;
+    // Ensure muted and inline flags are set early to maximize autoplay success
+    if (vid) {
+      try { vid.muted = true; } catch (e) {}
+      try { vid.playsInline = true; } catch (e) {}
+      try { vid.setAttribute('playsinline', ''); } catch (e) {}
+      try { vid.setAttribute('webkit-playsinline', ''); } catch (e) {}
+      try { vid.setAttribute('muted', ''); } catch (e) {}
+    }
     if (vid) {
       const START_SEC = 15.0; // start of loop segment (in seconds)
       const END_SEC = 26.0;   // end of loop segment (in seconds)
@@ -66,13 +80,29 @@ const { videoMp4 = '/videos/gella-gonzales.mp4', videoWebm = '/videos/hero-video
         vid.load();
 
         // Once metadata is loaded we can set currentTime and start playback
+        const playBtn = document.getElementById('hero-play');
         const onMeta = () => {
           // Clamp start to duration if needed
           const start = Math.min(START_SEC, vid.duration || START_SEC);
           const end = Math.min(END_SEC, vid.duration || END_SEC);
           // Seek to start of segment and play
           try { vid.currentTime = start; } catch (e) {}
-          vid.play().catch(() => {});
+          // Attempt autoplay. If blocked, show custom play button.
+          vid.play().then(() => {
+            if (playBtn) playBtn.classList.add('hidden');
+          }).catch(() => {
+            if (playBtn) {
+              playBtn.classList.remove('hidden');
+              const onClick = () => {
+                // ensure muted to allow autoplay on some devices
+                try { vid.muted = true; } catch (e) {}
+                vid.play().then(() => {
+                  playBtn.classList.add('hidden');
+                }).catch(() => {});
+              };
+              playBtn.addEventListener('click', onClick, { once: true });
+            }
+          });
 
           // Timeupdate loop: when reaching end, jump back to start
           const onTime = () => {
