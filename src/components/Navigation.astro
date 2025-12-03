@@ -1,0 +1,80 @@
+---
+// Navigation Component
+---
+
+<nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      
+      <!-- Logo/Name -->
+      <div class="flex-shrink-0">
+        <a href="/" class="text-2xl font-light tracking-wide hover:text-gray-300 transition-colors duration-300">
+          Gella Gonzales
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="#about" class="text-sm font-light hover:text-gray-300 transition-colors duration-300">
+          About
+        </a>
+        <a href="#work" class="text-sm font-light hover:text-gray-300 transition-colors duration-300">
+          Work
+        </a>
+        <a href="#gallery" class="text-sm font-light hover:text-gray-300 transition-colors duration-300">
+          Gallery
+        </a>
+        <a href="#contact" class="text-sm font-light hover:text-gray-300 transition-colors duration-300">
+          Contact
+        </a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button id="mobile-menu-button" class="text-white hover:text-gray-300 focus:outline-none">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Menu -->
+  <div id="mobile-menu" class="md:hidden hidden bg-black/95 backdrop-blur-sm">
+    <div class="px-6 pt-4 pb-6 space-y-4">
+      <a href="#about" class="block text-lg font-light hover:text-gray-300 transition-colors duration-300">
+        About
+      </a>
+      <a href="#work" class="block text-lg font-light hover:text-gray-300 transition-colors duration-300">
+        Work
+      </a>
+      <a href="#gallery" class="block text-lg font-light hover:text-gray-300 transition-colors duration-300">
+        Gallery
+      </a>
+      <a href="#contact" class="block text-lg font-light hover:text-gray-300 transition-colors duration-300">
+        Contact
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Mobile menu toggle
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close mobile menu when clicking on links
+    const mobileLinks = mobileMenu.querySelectorAll('a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+  }
+</script>

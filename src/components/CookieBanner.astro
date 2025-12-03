@@ -1,0 +1,44 @@
+---
+// Simple GDPR cookie banner: store user's choice in localStorage
+---
+
+<div id="cookie-banner" class="fixed bottom-4 left-4 right-4 md:left-1/2 md:transform md:-translate-x-1/2 z-50">
+  <div class="max-w-3xl mx-auto bg-black/90 border border-white/10 text-white text-sm px-4 py-3 rounded-md flex items-center justify-between gap-4">
+    <p class="text-sm">
+      We use cookies to improve your experience and analyze site usage. By continuing you accept our use of cookies. 
+      <a href="/privacy" class="underline">Privacy policy</a>
+    </p>
+
+    <div class="flex gap-2">
+      <button id="accept-cookies" class="link-outline" aria-label="Accept cookies">Accept</button>
+      <button id="reject-cookies" class="link-outline" aria-label="Reject cookies">Reject</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    if (typeof window === 'undefined') return;
+    const KEY = 'gg_cookies';
+    const banner = document.getElementById('cookie-banner');
+    if (!banner) return;
+    const stored = localStorage.getItem(KEY);
+    if (stored === 'accepted' || stored === 'rejected') {
+      banner.style.display = 'none';
+      return;
+    }
+
+    const accept = document.getElementById('accept-cookies');
+    const reject = document.getElementById('reject-cookies');
+
+    accept.addEventListener('click', () => {
+      localStorage.setItem(KEY, 'accepted');
+      banner.style.display = 'none';
+    });
+
+    reject.addEventListener('click', () => {
+      localStorage.setItem(KEY, 'rejected');
+      banner.style.display = 'none';
+    });
+  })();
+</script>

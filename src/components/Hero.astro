@@ -1,0 +1,107 @@
+---
+// Visual-only Hero: full-bleed background video with minimal markup for accessibility
+// Props: videoMp4, videoWebm, poster (all optional)
+const { videoMp4 = '/videos/gella-gonzales.mp4', videoWebm = '/videos/hero-video.webm', poster = '/images/hero-poster.svg' } = Astro.props;
+---
+
+<section id="hero" class="relative h-screen w-full overflow-hidden">
+  <!-- Poster for quick paint and low-bandwidth fallback -->
+  <img src={poster} alt="Hero poster" class="absolute inset-0 w-full h-full object-cover block md:hidden" />
+
+  <video
+    class="absolute inset-0 w-full h-full object-cover video-smooth video-bw"
+    autoplay
+    muted
+    playsinline
+    preload="metadata"
+    poster={poster}
+    aria-hidden="true"
+    data-src-mp4={videoMp4}
+    data-src-webm={videoWebm}
+  >
+    <!-- Sources will be set lazily by script below when the video enters the viewport -->
+  </video>
+
+  <div class="absolute inset-0 bg-black/10"></div>
+  <!-- Large brand lettering (left, center) -->
+  <div class="absolute left-6 lg:left-16 top-1/2 transform -translate-y-1/2 z-40">
+    <h2 class="brand-lettering pointer-events-none">Gella Gonzales</h2>
+    <div class="mt-8 pointer-events-auto">
+    </div>
+  </div>
+    <!-- CTA button positioned under the end of 'GONZALES' (near 'ZAL') -->
+    <div class="absolute z-40 pointer-events-auto" style="left:calc(50% + 10vw); top:calc(50% + 3.5rem);">
+      <a href="#" class="link-outline">
+        Intensives 2026
+      </a>
+    </div>
+  <h1 class="sr-only">Gella Gonzales — Movement Artist</h1>
+
+  <script type="module">
+    // Lazy-load video sources and loop a specific segment (0:15 - 0:26)
+    const section = document.getElementById('hero');
+    const vid = section ? section.querySelector('video') : null;
+    if (vid) {
+      const START_SEC = 15.0; // start of loop segment (in seconds)
+      const END_SEC = 26.0;   // end of loop segment (in seconds)
+      let sourcesLoaded = false;
+
+      const loadSources = () => {
+        if (sourcesLoaded) return;
+        sourcesLoaded = true;
+        const mp4 = vid.getAttribute('data-src-mp4') || vid.dataset.srcMp4;
+        const webm = vid.getAttribute('data-src-webm') || vid.dataset.srcWebm;
+        if (webm) {
+          const s1 = document.createElement('source');
+          s1.src = webm;
+          s1.type = 'video/webm';
+          vid.appendChild(s1);
+        }
+        if (mp4) {
+          const s2 = document.createElement('source');
+          s2.src = mp4;
+          s2.type = 'video/mp4';
+          vid.appendChild(s2);
+        }
+        vid.load();
+
+        // Once metadata is loaded we can set currentTime and start playback
+        const onMeta = () => {
+          // Clamp start to duration if needed
+          const start = Math.min(START_SEC, vid.duration || START_SEC);
+          const end = Math.min(END_SEC, vid.duration || END_SEC);
+          // Seek to start of segment and play
+          try { vid.currentTime = start; } catch (e) {}
+          vid.play().catch(() => {});
+
+          // Timeupdate loop: when reaching end, jump back to start
+          const onTime = () => {
+            if (vid.currentTime >= end - 0.05) {
+              try { vid.currentTime = start; } catch (e) {}
+            }
+          };
+
+          vid.addEventListener('timeupdate', onTime);
+          vid.removeEventListener('loadedmetadata', onMeta);
+        };
+
+        vid.addEventListener('loadedmetadata', onMeta);
+      };
+
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries, obs) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              loadSources();
+              obs.disconnect();
+            }
+          });
+        }, {rootMargin: '200px'});
+        io.observe(vid);
+      } else {
+        // Fallback: load immediately
+        loadSources();
+      }
+    }
+  </script>
+</section>

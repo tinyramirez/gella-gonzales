@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Enhanced video smoothing for HD quality */
+.video-smooth {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  filter: contrast(1.02) saturate(1.05) brightness(1.01) blur(0.15px);
+  -webkit-filter: contrast(1.02) saturate(1.05) brightness(1.01) blur(0.15px);
+}
+
+/* Apply black & white treatment with lighter contrast */
+.video-bw {
+  filter: grayscale(1) contrast(1.08) brightness(1.0) saturate(0);
+  -webkit-filter: grayscale(1) contrast(1.08) brightness(1.0) saturate(0);
+}
+
+/* Refined outline link style - thinner, more elegant */
+.link-outline {
+  display: inline-block;
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.65rem;
+  font-weight: 300;
+  padding: 0.5rem 1rem;
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 0.125rem;
+  background: transparent;
+  transition: all 200ms ease;
+}
+.link-outline:hover {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
+
+/* Large branding lettering - thinner, more refined */
+.brand-lettering {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: white;
+  line-height: 0.85;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: clamp(2.5rem, 10vw, 7.25rem);
+}/* Smaller variant when you need condensed stacked lettering */
+.brand-lettering--small {
+	font-size: clamp(1.25rem, 4vw, 2rem);
+	font-weight: 700;
+	letter-spacing: 0.12em;
+}
